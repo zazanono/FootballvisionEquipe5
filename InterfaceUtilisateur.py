@@ -1,8 +1,8 @@
 import sys
 import cv2
-from PyQt6.QtWidgets import QApplication, QLabel, QPushButton, QVBoxLayout, QWidget
-from PyQt6.QtGui import QImage, QPixmap
-from PyQt6.QtCore import QTimer
+from PyQt6.QtWidgets import QApplication, QLabel, QPushButton, QVBoxLayout, QWidget, QHBoxLayout
+from PyQt6.QtGui import QImage, QPixmap, QIcon, QPainter, QColor
+from PyQt6.QtCore import QTimer, QRect
 
 
 class VideoPlayer(QWidget):
@@ -16,16 +16,38 @@ class VideoPlayer(QWidget):
         self.video_label = QLabel(self)
         self.pause_button = QPushButton("Pause", self)
         self.pause_button.clicked.connect(self.toggle_playback)
+        self.setWindowTitle("Video soccer tracker")
+        self.setWindowIcon(QIcon("71bgARSO2EL.jpg"))
 
         layout = QVBoxLayout()
         layout.addWidget(self.video_label)
+
+
+        layout1 = QHBoxLayout()
+        button1 = QPushButton("Statistiques", self)
+
+        layout1.addWidget(button1)
+
+
         layout.addWidget(self.pause_button)
+
         self.setLayout(layout)
 
         # Timer pour mise à jour des frames
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_frame)
         self.timer.start(30)  # 30 ms = ~33 FPS
+
+    def set_media(self, video_path):
+        self.video_path = video_path
+        self.cap = cv2.VideoCapture(self.video_path)
+
+    def paintEvent(self, event):
+        super().paintEvent(event)
+        painter = QPainter(self)
+        painter.setBrush(QColor(0, 0, 0))
+        painter.drawRect(QRect(100, 100, 50, 50))
+        painter.end()
 
     def update_frame(self):
         if self.playing:
