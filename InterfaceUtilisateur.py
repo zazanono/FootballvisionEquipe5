@@ -8,6 +8,7 @@ from PyQt6.QtCore import QTimer, QRect
 class VideoPlayer(QWidget):
     def __init__(self, video_path):
         super().__init__()
+        #self.showMaximized()
         self.video_path = video_path
         self.cap = cv2.VideoCapture(self.video_path)
         self.playing = True
@@ -25,7 +26,6 @@ class VideoPlayer(QWidget):
 
         layout1 = QHBoxLayout()
         button1 = QPushButton("Statistiques", self)
-
         layout1.addWidget(button1)
 
 
