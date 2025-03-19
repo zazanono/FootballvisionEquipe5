@@ -1,7 +1,7 @@
 import sys
 import cv2
 from PyQt6.QtCore import Qt, QTimer
-from PyQt6.QtGui import QImage, QPixmap
+from PyQt6.QtGui import QImage, QPixmap, QIcon
 from PyQt6.QtWidgets import (
     QApplication, QWidget, QPushButton, QVBoxLayout, QStackedWidget, QFileDialog, QLabel, QHBoxLayout
 )
@@ -134,7 +134,7 @@ class MainWindow(QWidget):
         self.setStyleSheet("background-color: #222F49")  # Changer la couleur
 
         self.stacked_widget = QStackedWidget()
-
+        self.setWindowIcon(QIcon("logo.png"))
         self.app_screen = Application(self.stacked_widget)  # Crée l'écran de l'application
         self.menu = Menu(self.stacked_widget, self.app_screen)  # Passe une référence à l'application
 
