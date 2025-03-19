@@ -3,7 +3,8 @@ import cv2
 from PyQt6.QtCore import Qt, QTimer, QSize
 from PyQt6.QtGui import QImage, QPixmap, QIcon
 from PyQt6.QtWidgets import (
-    QApplication, QWidget, QPushButton, QVBoxLayout, QStackedWidget, QFileDialog, QLabel, QHBoxLayout, QSizePolicy
+    QApplication, QWidget, QPushButton, QVBoxLayout, QStackedWidget, QFileDialog, QLabel, QHBoxLayout, QSizePolicy,
+    QTableWidget, QTableWidgetItem
 )
 
 
@@ -85,6 +86,11 @@ class Application(QWidget):
         self.buttonRetourMenu.setStyleSheet("border: none; background: transparent;")  # Cache la bordure et l'arrière-plan
         self.buttonRetourMenu.clicked.connect(self.retour_menu)
 
+        self.compo_bouton = QPushButton()
+        self.compo_bouton.setStyleSheet(
+            "QPushButton {background-color: black; color: white; padding: 10px; border-radius: 10px;}")
+        self.compo_bouton.clicked.connect(self.compo_video)
+
         self.pause_button = QPushButton()
         self.pause_button.setIcon(QIcon("pause.png"))  # Chemin vers icône
         self.pause_button.setIconSize(QSize(64, 64))  # Taille de l'icône
@@ -120,6 +126,7 @@ class Application(QWidget):
 
         layoutH1.addWidget(self.buttonRetourMenu, alignment=Qt.AlignmentFlag.AlignTop)
         layoutH1.addWidget(self.video_label)
+        layoutH1.addWidget(self.compo_bouton, alignment=Qt.AlignmentFlag.AlignCenter)
 
         layoutH2.addWidget(self.pause_button, alignment=Qt.AlignmentFlag.AlignCenter)
         layoutH2.addWidget(self.stop_button, alignment=Qt.AlignmentFlag.AlignCenter)
@@ -202,6 +209,22 @@ class Application(QWidget):
             new_pos = min(total_frames - 1, current_pos + frames_to_advance)  # Ne pas dépasser la fin de la vidéo
             self.cap.set(cv2.CAP_PROP_POS_FRAMES, new_pos)
 
+    def compo_video(self):
+        self.rect_widget = QWidget(self)
+        self.rect_widget.setGeometry(100, 100, 200, 150)
+        self.rect_widget.setStyleSheet("background-color: rgba(0, 0, 0, 0); border: 2px solid white;")
+        self.rect_widget.show()
+
+        if self.cap:
+            self.tableau = QTableWidget(4, 3, self)
+            self.tableau.setGeometry(50, 50, 400, 300)
+            self.tableau.setStyleSheet("background-color: transparent; border: none;")
+
+            for i in range(4):
+                for j in range(3):
+                    item = QTableWidgetItem(f"Cell {i + 1}, {j + 1}")
+                    item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                    self.tableau.setItem(i, j, item)
 
     def closeEvent(self, event):
         """ Libère les ressources OpenCV à la fermeture """
