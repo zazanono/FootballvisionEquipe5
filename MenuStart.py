@@ -1,6 +1,6 @@
 import sys
 import cv2
-from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtCore import Qt, QTimer, QSize
 from PyQt6.QtGui import QImage, QPixmap, QIcon
 from PyQt6.QtWidgets import (
     QApplication, QWidget, QPushButton, QVBoxLayout, QStackedWidget, QFileDialog, QLabel, QHBoxLayout, QSizePolicy
@@ -79,7 +79,13 @@ class Application(QWidget):
         self.video_label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
         #Boutons
-        self.pause_button = QPushButton("Play", self)
+        self.buttonRetourMenu = QPushButton()
+        self.buttonRetourMenu.setIcon(QIcon("logo.png"))  # Chemin vers ton icône
+        self.buttonRetourMenu.setIconSize(QSize(64, 64))  # Taille de l'icône
+        self.buttonRetourMenu.setStyleSheet("border: none; background: transparent;")  # Cache la bordure et l'arrière-plan
+        self.buttonRetourMenu.clicked.connect(self.retour_menu)
+
+        self.pause_button = QPushButton("Pause", self)
         self.pause_button.setStyleSheet(
             "QPushButton {background-color: #4F94BA; color: white; padding: 10px; border-radius: 10px;} "
             "QPushButton:hover {background-color: #3F7797;}"
@@ -91,21 +97,23 @@ class Application(QWidget):
             "QPushButton {background-color: red; color: white; padding: 10px; border-radius: 10px;}")
         self.stop_button.clicked.connect(self.stop_video)
 
-        self.rewind_button = QPushButton("Reculer 15s", self)
+        self.rewind_button = QPushButton("Reculer 5s", self)
         self.rewind_button.setStyleSheet(
             "QPushButton {background-color: #FF6347; color: white; padding: 10px; border-radius: 10px;}")
         self.rewind_button.clicked.connect(self.rewind_video)
 
-        self.forward_button = QPushButton("Avancer 15s", self)
+        self.forward_button = QPushButton("Avancer 5s", self)
         self.forward_button.setStyleSheet(
             "QPushButton {background-color: #4CAF50; color: white; padding: 10px; border-radius: 10px;}")
         self.forward_button.clicked.connect(self.forward_video)
 
         # Layout principal
         layout = QVBoxLayout()
+        layout.addWidget(self.buttonRetourMenu, alignment=Qt.AlignmentFlag.AlignTop)
         layout.addWidget(self.video_label)
         layoutH = QHBoxLayout()
         layout.addLayout(layoutH)
+
         layoutH.addWidget(self.pause_button, alignment=Qt.AlignmentFlag.AlignCenter)
         layoutH.addWidget(self.stop_button, alignment=Qt.AlignmentFlag.AlignCenter)
         layoutH.addWidget(self.rewind_button, alignment=Qt.AlignmentFlag.AlignCenter)
@@ -146,6 +154,11 @@ class Application(QWidget):
             else:
                 self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)  # Rejouer la vidéo
 
+    def retour_menu(self):
+        self.stacked_widget.setCurrentIndex(0)
+        self.stop_video()
+        self.toggle_playback()
+
     def toggle_playback(self):
         """ Met en pause ou reprend la lecture """
         if self.cap:
@@ -164,7 +177,7 @@ class Application(QWidget):
         if self.cap:
             current_pos = self.cap.get(cv2.CAP_PROP_POS_FRAMES)
             fps = self.cap.get(cv2.CAP_PROP_FPS)
-            frames_to_rewind = int(fps * 15)  # 15 secondes en frames
+            frames_to_rewind = int(fps * 5)  # 15 secondes en frames
 
             new_pos = max(0, current_pos - frames_to_rewind)  # Ne pas dépasser le début de la vidéo
             self.cap.set(cv2.CAP_PROP_POS_FRAMES, new_pos)
@@ -174,7 +187,7 @@ class Application(QWidget):
         if self.cap:
             current_pos = self.cap.get(cv2.CAP_PROP_POS_FRAMES)
             fps = self.cap.get(cv2.CAP_PROP_FPS)
-            frames_to_advance = int(fps * 15)  # 15 secondes en frames
+            frames_to_advance = int(fps * 5)  # 15 secondes en frames
 
             total_frames = self.cap.get(cv2.CAP_PROP_FRAME_COUNT)
             new_pos = min(total_frames - 1, current_pos + frames_to_advance)  # Ne pas dépasser la fin de la vidéo
