@@ -32,12 +32,14 @@ class Menu(QWidget):
         # Bouton pour ouvrir le sélecteur de fichier
         self.buttonParcourir = QPushButton("Parcourir...")
         self.buttonParcourir.setFixedSize(150, 40)
+        self.buttonParcourir.setStyleSheet("background-color: #4F94BA; color: white; padding: 10px; border-radius: 10px;")
         self.buttonParcourir.clicked.connect(self.open_file_dialog)
         layout.addWidget(self.buttonParcourir, alignment=Qt.AlignmentFlag.AlignTop)
 
         # Bouton pour lancer l'application
         self.buttonLancer = QPushButton("Lancer")
         self.buttonLancer.setFixedSize(150, 40)
+        self.buttonLancer.setStyleSheet("background-color: #4F94BA; color: white; padding: 10px; border-radius: 10px;")
         self.buttonLancer.clicked.connect(self.go_to_app)
         layout.addWidget(self.buttonLancer, alignment=Qt.AlignmentFlag.AlignTop)
 
@@ -69,6 +71,7 @@ class Application(QWidget):
         self.video_label.setAlignment(Qt.AlignmentFlag.AlignCenter)  # Centre l'affichage vidéo
 
         self.pause_button = QPushButton("Play", self)
+        self.pause_button.setStyleSheet("background-color: #4F94BA; color: white; padding: 10px; border-radius: 10px;")
         self.pause_button.clicked.connect(self.toggle_playback)
 
         # Layout principal
