@@ -86,9 +86,10 @@ class Application(QWidget):
         self.buttonRetourMenu.setStyleSheet("border: none; background: transparent;")  # Cache la bordure et l'arrière-plan
         self.buttonRetourMenu.clicked.connect(self.retour_menu)
 
-        self.compo_bouton = QPushButton()
+        self.compo_bouton = QPushButton("Compo")
+        self.compo_bouton.setGeometry(200, 100, 150, 400)
         self.compo_bouton.setStyleSheet(
-            "QPushButton {background-color: black; color: white; padding: 10px; border-radius: 10px;}")
+            "QPushButton {background-color: white; color: black; padding: 10px; border-radius: 10px;}")
         self.compo_bouton.clicked.connect(self.compo_video)
 
         self.pause_button = QPushButton()
@@ -211,13 +212,13 @@ class Application(QWidget):
 
     def compo_video(self):
         self.rect_widget = QWidget(self)
-        self.rect_widget.setGeometry(100, 100, 200, 150)
+        self.rect_widget.setGeometry(200, 100, 150, 400)
         self.rect_widget.setStyleSheet("background-color: rgba(0, 0, 0, 0); border: 2px solid white;")
         self.rect_widget.show()
 
         if self.cap:
             self.tableau = QTableWidget(4, 3, self)
-            self.tableau.setGeometry(50, 50, 400, 300)
+            self.tableau.setGeometry(70, 100, 450, 280)
             self.tableau.setStyleSheet("background-color: transparent; border: none;")
 
             for i in range(4):
