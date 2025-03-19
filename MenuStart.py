@@ -21,27 +21,31 @@ class Menu(QWidget):
         self.image_label.setScaledContents(True)  # Ajuste l’image au QLabel
         self.image_label.preserve_aspect_ratio = True
         self.image_label.setFixedSize(204, 172)  # Taille de l’image
-        layout.addWidget(self.image_label, alignment=Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(self.image_label, alignment=Qt.AlignmentFlag.AlignHCenter)
 
         # Label pour afficher le chemin du fichier sélectionné
         self.label = QLabel("Aucun fichier sélectionné")
         self.label.setStyleSheet("background-color: #354665; color: white; font-size: 18px;")
         self.label.setFixedSize(500, 40)
-        layout.addWidget(self.label, alignment=Qt.AlignmentFlag.AlignTop)
+        layout.addWidget(self.label, alignment=Qt.AlignmentFlag.AlignHCenter)
 
         # Bouton pour ouvrir le sélecteur de fichier
         self.buttonParcourir = QPushButton("Parcourir...")
         self.buttonParcourir.setFixedSize(150, 40)
-        self.buttonParcourir.setStyleSheet("background-color: #4F94BA; color: white; padding: 10px; border-radius: 10px;")
+        self.buttonParcourir.setStyleSheet("QPushButton {background-color: #4F94BA; color: white; padding: 10px; border-radius: 10px;} "
+                                           "QPushButton:hover {background-color: #3F7797;}"
+                                           "QPushButton:pressed {background-color: #61BCF0;}")
         self.buttonParcourir.clicked.connect(self.open_file_dialog)
-        layout.addWidget(self.buttonParcourir, alignment=Qt.AlignmentFlag.AlignTop)
+        layout.addWidget(self.buttonParcourir, alignment=Qt.AlignmentFlag.AlignHCenter)
 
         # Bouton pour lancer l'application
         self.buttonLancer = QPushButton("Lancer")
         self.buttonLancer.setFixedSize(150, 40)
-        self.buttonLancer.setStyleSheet("background-color: #4F94BA; color: white; padding: 10px; border-radius: 10px;")
+        self.buttonLancer.setStyleSheet("QPushButton {background-color: #4F94BA; color: white; padding: 10px; border-radius: 10px;}"
+                                        "QPushButton:hover {background-color: #3F7797;}"
+                                        "QPushButton:pressed {background-color: #61BCF0;}")
         self.buttonLancer.clicked.connect(self.go_to_app)
-        layout.addWidget(self.buttonLancer, alignment=Qt.AlignmentFlag.AlignTop)
+        layout.addWidget(self.buttonLancer, alignment=Qt.AlignmentFlag.AlignHCenter)
 
         self.setLayout(layout)
 
@@ -71,7 +75,9 @@ class Application(QWidget):
         self.video_label.setAlignment(Qt.AlignmentFlag.AlignCenter)  # Centre l'affichage vidéo
 
         self.pause_button = QPushButton("Play", self)
-        self.pause_button.setStyleSheet("background-color: #4F94BA; color: white; padding: 10px; border-radius: 10px;")
+        self.pause_button.setStyleSheet("QPushButton {background-color: #4F94BA; color: white; padding: 10px; border-radius: 10px;} "
+                                        "QPushButton:hover {background-color: #3F7797;}"
+                                        "QPushButton:pressed {background-color: #61BCF0;}")
         self.pause_button.clicked.connect(self.toggle_playback)
 
         # Layout principal
