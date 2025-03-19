@@ -109,15 +109,20 @@ class Application(QWidget):
 
         # Layout principal
         layout = QVBoxLayout()
-        layout.addWidget(self.buttonRetourMenu, alignment=Qt.AlignmentFlag.AlignTop)
-        layout.addWidget(self.video_label)
-        layoutH = QHBoxLayout()
-        layout.addLayout(layoutH)
 
-        layoutH.addWidget(self.pause_button, alignment=Qt.AlignmentFlag.AlignCenter)
-        layoutH.addWidget(self.stop_button, alignment=Qt.AlignmentFlag.AlignCenter)
-        layoutH.addWidget(self.rewind_button, alignment=Qt.AlignmentFlag.AlignCenter)
-        layoutH.addWidget(self.forward_button, alignment=Qt.AlignmentFlag.AlignCenter)
+        layoutH1 = QHBoxLayout()
+        layoutH2 = QHBoxLayout()
+
+        layout.addLayout(layoutH1)
+        layout.addLayout(layoutH2)
+
+        layoutH1.addWidget(self.buttonRetourMenu, alignment=Qt.AlignmentFlag.AlignTop)
+        layoutH1.addWidget(self.video_label)
+
+        layoutH2.addWidget(self.pause_button, alignment=Qt.AlignmentFlag.AlignCenter)
+        layoutH2.addWidget(self.stop_button, alignment=Qt.AlignmentFlag.AlignCenter)
+        layoutH2.addWidget(self.rewind_button, alignment=Qt.AlignmentFlag.AlignCenter)
+        layoutH2.addWidget(self.forward_button, alignment=Qt.AlignmentFlag.AlignCenter)
 
 
         self.setLayout(layout)
@@ -182,6 +187,7 @@ class Application(QWidget):
             new_pos = max(0, current_pos - frames_to_rewind)  # Ne pas dépasser le début de la vidéo
             self.cap.set(cv2.CAP_PROP_POS_FRAMES, new_pos)
 
+
     def forward_video(self):
         """ Avancer de 15 secondes dans la vidéo """
         if self.cap:
@@ -192,6 +198,7 @@ class Application(QWidget):
             total_frames = self.cap.get(cv2.CAP_PROP_FRAME_COUNT)
             new_pos = min(total_frames - 1, current_pos + frames_to_advance)  # Ne pas dépasser la fin de la vidéo
             self.cap.set(cv2.CAP_PROP_POS_FRAMES, new_pos)
+
 
     def closeEvent(self, event):
         """ Libère les ressources OpenCV à la fermeture """
