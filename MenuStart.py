@@ -6,6 +6,7 @@ from PyQt6.QtWidgets import (
     QApplication, QWidget, QPushButton, QVBoxLayout, QStackedWidget, QFileDialog, QLabel, QHBoxLayout, QSizePolicy
 )
 
+
 class Menu(QWidget):
     def __init__(self, stacked_widget, app_screen):
         super().__init__()
@@ -32,18 +33,20 @@ class Menu(QWidget):
         # Bouton pour ouvrir le sélecteur de fichier
         self.buttonParcourir = QPushButton("Parcourir...")
         self.buttonParcourir.setFixedSize(150, 40)
-        self.buttonParcourir.setStyleSheet("QPushButton {background-color: #4F94BA; color: white; padding: 10px; border-radius: 10px;} "
-                                           "QPushButton:hover {background-color: #3F7797;}"
-                                           "QPushButton:pressed {background-color: #61BCF0;}")
+        self.buttonParcourir.setStyleSheet(
+            "QPushButton {background-color: #4F94BA; color: white; padding: 10px; border-radius: 10px;} "
+            "QPushButton:hover {background-color: #3F7797;}"
+            "QPushButton:pressed {background-color: #61BCF0;}")
         self.buttonParcourir.clicked.connect(self.open_file_dialog)
         layout.addWidget(self.buttonParcourir, alignment=Qt.AlignmentFlag.AlignHCenter)
 
         # Bouton pour lancer l'application
         self.buttonLancer = QPushButton("Lancer")
         self.buttonLancer.setFixedSize(150, 40)
-        self.buttonLancer.setStyleSheet("QPushButton {background-color: #4F94BA; color: white; padding: 10px; border-radius: 10px;}"
-                                        "QPushButton:hover {background-color: #3F7797;}"
-                                        "QPushButton:pressed {background-color: #61BCF0;}")
+        self.buttonLancer.setStyleSheet(
+            "QPushButton {background-color: #4F94BA; color: white; padding: 10px; border-radius: 10px;}"
+            "QPushButton:hover {background-color: #3F7797;}"
+            "QPushButton:pressed {background-color: #61BCF0;}")
         self.buttonLancer.clicked.connect(self.go_to_app)
         layout.addWidget(self.buttonLancer, alignment=Qt.AlignmentFlag.AlignHCenter)
 
@@ -75,16 +78,39 @@ class Application(QWidget):
         self.video_label.setAlignment(Qt.AlignmentFlag.AlignCenter)  # Centre l'affichage vidéo
         self.video_label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
+        #Boutons
         self.pause_button = QPushButton("Play", self)
-        self.pause_button.setStyleSheet("QPushButton {background-color: #4F94BA; color: white; padding: 10px; border-radius: 10px;} "
-                                        "QPushButton:hover {background-color: #3F7797;}"
-                                        "QPushButton:pressed {background-color: #61BCF0;}")
+        self.pause_button.setStyleSheet(
+            "QPushButton {background-color: #4F94BA; color: white; padding: 10px; border-radius: 10px;} "
+            "QPushButton:hover {background-color: #3F7797;}"
+            "QPushButton:pressed {background-color: #61BCF0;}")
         self.pause_button.clicked.connect(self.toggle_playback)
+
+        self.stop_button = QPushButton("Stop", self)
+        self.stop_button.setStyleSheet(
+            "QPushButton {background-color: red; color: white; padding: 10px; border-radius: 10px;}")
+        self.stop_button.clicked.connect(self.stop_video)
+
+        self.rewind_button = QPushButton("Reculer 15s", self)
+        self.rewind_button.setStyleSheet(
+            "QPushButton {background-color: #FF6347; color: white; padding: 10px; border-radius: 10px;}")
+        self.rewind_button.clicked.connect(self.rewind_video)
+
+        self.forward_button = QPushButton("Avancer 15s", self)
+        self.forward_button.setStyleSheet(
+            "QPushButton {background-color: #4CAF50; color: white; padding: 10px; border-radius: 10px;}")
+        self.forward_button.clicked.connect(self.forward_video)
 
         # Layout principal
         layout = QVBoxLayout()
         layout.addWidget(self.video_label)
-        layout.addWidget(self.pause_button, alignment=Qt.AlignmentFlag.AlignCenter)
+        layoutH = QHBoxLayout()
+        layout.addLayout(layoutH)
+        layoutH.addWidget(self.pause_button, alignment=Qt.AlignmentFlag.AlignCenter)
+        layoutH.addWidget(self.stop_button, alignment=Qt.AlignmentFlag.AlignCenter)
+        layoutH.addWidget(self.rewind_button, alignment=Qt.AlignmentFlag.AlignCenter)
+        layoutH.addWidget(self.forward_button, alignment=Qt.AlignmentFlag.AlignCenter)
+
 
         self.setLayout(layout)
 
@@ -126,6 +152,34 @@ class Application(QWidget):
             self.playing = not self.playing
             self.pause_button.setText("Pause" if self.playing else "Play")
 
+    def stop_video(self):
+        """ Arrête la lecture de la vidéo """
+        if self.cap:
+            self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)  # Remet la vidéo au début
+            self.playing = False
+            self.pause_button.setText("Play")  # Réinitialise le texte du bouton à "Play"
+
+    def rewind_video(self):
+        """ Reculer de 15 secondes dans la vidéo """
+        if self.cap:
+            current_pos = self.cap.get(cv2.CAP_PROP_POS_FRAMES)
+            fps = self.cap.get(cv2.CAP_PROP_FPS)
+            frames_to_rewind = int(fps * 15)  # 15 secondes en frames
+
+            new_pos = max(0, current_pos - frames_to_rewind)  # Ne pas dépasser le début de la vidéo
+            self.cap.set(cv2.CAP_PROP_POS_FRAMES, new_pos)
+
+    def forward_video(self):
+        """ Avancer de 15 secondes dans la vidéo """
+        if self.cap:
+            current_pos = self.cap.get(cv2.CAP_PROP_POS_FRAMES)
+            fps = self.cap.get(cv2.CAP_PROP_FPS)
+            frames_to_advance = int(fps * 15)  # 15 secondes en frames
+
+            total_frames = self.cap.get(cv2.CAP_PROP_FRAME_COUNT)
+            new_pos = min(total_frames - 1, current_pos + frames_to_advance)  # Ne pas dépasser la fin de la vidéo
+            self.cap.set(cv2.CAP_PROP_POS_FRAMES, new_pos)
+
     def closeEvent(self, event):
         """ Libère les ressources OpenCV à la fermeture """
         if self.cap:
@@ -145,8 +199,7 @@ class MainWindow(QWidget):
         self.app_screen = Application(self.stacked_widget)  # Crée l'écran de l'application
         self.menu = Menu(self.stacked_widget, self.app_screen)  # Passe une référence à l'application
 
-
-        self.stacked_widget.addWidget(self.menu)       # Index 0 : Menu
+        self.stacked_widget.addWidget(self.menu)  # Index 0 : Menu
         self.stacked_widget.addWidget(self.app_screen)  # Index 1 : Application
 
         layout = QVBoxLayout()
