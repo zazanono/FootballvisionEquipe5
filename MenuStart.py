@@ -3,7 +3,7 @@ import cv2
 from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtGui import QImage, QPixmap, QIcon
 from PyQt6.QtWidgets import (
-    QApplication, QWidget, QPushButton, QVBoxLayout, QStackedWidget, QFileDialog, QLabel, QHBoxLayout
+    QApplication, QWidget, QPushButton, QVBoxLayout, QStackedWidget, QFileDialog, QLabel, QHBoxLayout, QSizePolicy
 )
 
 class Menu(QWidget):
@@ -73,6 +73,7 @@ class Application(QWidget):
         # Interface
         self.video_label = QLabel(self)
         self.video_label.setAlignment(Qt.AlignmentFlag.AlignCenter)  # Centre l'affichage vidéo
+        self.video_label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
         self.pause_button = QPushButton("Play", self)
         self.pause_button.setStyleSheet("QPushButton {background-color: #4F94BA; color: white; padding: 10px; border-radius: 10px;} "
@@ -135,7 +136,7 @@ class Application(QWidget):
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Basketvision")
+        self.setWindowTitle("Vision FC")
         self.showMaximized()
         self.setStyleSheet("background-color: #222F49")  # Changer la couleur
 
@@ -143,6 +144,7 @@ class MainWindow(QWidget):
         self.setWindowIcon(QIcon("logo.png"))
         self.app_screen = Application(self.stacked_widget)  # Crée l'écran de l'application
         self.menu = Menu(self.stacked_widget, self.app_screen)  # Passe une référence à l'application
+
 
         self.stacked_widget.addWidget(self.menu)       # Index 0 : Menu
         self.stacked_widget.addWidget(self.app_screen)  # Index 1 : Application
