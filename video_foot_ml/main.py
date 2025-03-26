@@ -1,9 +1,9 @@
-from utils import sauvegarder_video, lire_video
+from video_foot_ml.utils.video_utils import sauvegarder_video, lire_video
 from trackers import Tracker
 
-def main():
+def main(video_path):
     # Lire la video
-    video_images = lire_video("input_videos/foot1.mp4")
+    video_images = lire_video(video_path)
 
     # Initialiser les trackers
     tracker = Tracker('models/football-player-detector-n.pt')

@@ -7,7 +7,7 @@ import cv2
 import sys
 
 sys.path.append('../')
-from utils import get_center_of_bbox, get_bbox_width
+from video_foot_ml.utils import get_center_of_bbox, get_bbox_width
 
 
 class Tracker:
