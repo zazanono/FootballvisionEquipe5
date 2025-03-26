@@ -4,7 +4,7 @@ from PyQt6.QtGui import QIcon, QImage, QPixmap
 from PyQt6.QtWidgets import QLabel, QSizePolicy, QPushButton, QVBoxLayout, QHBoxLayout, QWidget, QTableWidget, \
     QTableWidgetItem
 
-from CustomSlider import CustomSlider
+from Interfaces.CustomSlider import CustomSlider
 
 
 class Application(QWidget):
@@ -27,7 +27,7 @@ class Application(QWidget):
 
         # Boutons
         self.buttonRetourMenu = QPushButton()
-        self.buttonRetourMenu.setIcon(QIcon("../images/logo.png"))  # Chemin vers icône
+        self.buttonRetourMenu.setIcon(QIcon("images/logo.png"))  # Chemin vers icône
         self.buttonRetourMenu.setIconSize(QSize(64, 64))  # Taille de l'icône
         self.buttonRetourMenu.setStyleSheet(
             "border: none; background: transparent;")  # Cache la bordure et l'arrière-plan
@@ -40,25 +40,25 @@ class Application(QWidget):
         self.compo_bouton.clicked.connect(self.compo_video)
 
         self.pause_button = QPushButton()
-        self.pause_button.setIcon(QIcon("../images/pause.png"))  # Chemin vers icône
+        self.pause_button.setIcon(QIcon("images/pause.png"))  # Chemin vers icône
         self.pause_button.setIconSize(QSize(64, 64))  # Taille de l'icône
         self.pause_button.setStyleSheet("border: none; background: transparent;")
         self.pause_button.clicked.connect(self.toggle_playback)
 
         self.stop_button = QPushButton()
-        self.stop_button.setIcon(QIcon("../images/stop.png"))  # Chemin vers ton icône
+        self.stop_button.setIcon(QIcon("images/stop.png"))  # Chemin vers ton icône
         self.stop_button.setIconSize(QSize(64, 64))  # Taille de l'icône
         self.stop_button.setStyleSheet("border: none; background: transparent;")
         self.stop_button.clicked.connect(self.stop_video)
 
         self.rewind_button = QPushButton()
-        self.rewind_button.setIcon(QIcon("../images/fast-backward.png"))  # Chemin vers ton icône
+        self.rewind_button.setIcon(QIcon("images/fast-backward.png"))  # Chemin vers ton icône
         self.rewind_button.setIconSize(QSize(64, 64))  # Taille de l'icône
         self.rewind_button.setStyleSheet("border: none; background: transparent;")
         self.rewind_button.clicked.connect(self.rewind_video)
 
         self.forward_button = QPushButton()
-        self.forward_button.setIcon(QIcon("../images/fast-forward.png"))  # Chemin vers ton icône
+        self.forward_button.setIcon(QIcon("images/fast-forward.png"))  # Chemin vers ton icône
         self.forward_button.setIconSize(QSize(64, 64))  # Taille de l'icône
         self.forward_button.setStyleSheet("border: none; background: transparent;")
         self.forward_button.clicked.connect(self.forward_video)
@@ -164,7 +164,7 @@ class Application(QWidget):
         if self.cap:
             self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)  # Remet la vidéo au début
             self.playing = False
-            self.pause_button.setIcon(QIcon("../images/play.png"))
+            self.pause_button.setIcon(QIcon("images/play.png"))
 
     def rewind_video(self):
         """ Reculer de 5 secondes dans la vidéo """

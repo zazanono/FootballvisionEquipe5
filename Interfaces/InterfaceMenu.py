@@ -15,7 +15,7 @@ class Menu(QWidget):
         layout = QVBoxLayout()
 
         self.image_label = QLabel()
-        self.image_label.setPixmap(QPixmap("../images/logo.png"))  # Charge une image
+        self.image_label.setPixmap(QPixmap("images/logo.png"))  # Charge une image
         self.image_label.setScaledContents(True)  # Ajuste l’image au QLabel
         self.image_label.preserve_aspect_ratio = True
         self.image_label.setFixedSize(204, 172)  # Taille de l’image
