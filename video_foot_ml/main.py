@@ -15,7 +15,7 @@ def main():
     video_sortie_images = tracker.draw_annotations(video_images, tracks)
 
     # Sauvegarder la video
-    sauvegarder_video(video_sortie_images, "video_foot_ml/output_videos/", 2)
+    sauvegarder_video(video_sortie_images, "video_foot_ml/output_videos/", "output_videos")
 
 
 if __name__ == '__main__':
