@@ -1,11 +1,13 @@
 import sys
 import cv2
-from PyQt6.QtCore import Qt, QTimer, QSize
-from PyQt6.QtGui import QImage, QPixmap, QIcon
+from PyQt6.QtCore import Qt, QTimer, QSize, QElapsedTimer
+from PyQt6.QtGui import QImage, QPixmap, QIcon, QCursor
 from PyQt6.QtWidgets import (
     QApplication, QWidget, QPushButton, QVBoxLayout, QStackedWidget, QFileDialog, QLabel, QHBoxLayout, QSizePolicy,
-    QTableWidget, QTableWidgetItem
+    QTableWidget, QTableWidgetItem, QSlider
 )
+
+from CustomSlider import CustomSlider
 
 
 class Menu(QWidget):
@@ -19,7 +21,7 @@ class Menu(QWidget):
         layout = QVBoxLayout()
 
         self.image_label = QLabel()
-        self.image_label.setPixmap(QPixmap("logo.png"))  # Charge une image
+        self.image_label.setPixmap(QPixmap("images/logo.png"))  # Charge une image
         self.image_label.setScaledContents(True)  # Ajuste l’image au QLabel
         self.image_label.preserve_aspect_ratio = True
         self.image_label.setFixedSize(204, 172)  # Taille de l’image
@@ -74,16 +76,22 @@ class Application(QWidget):
         self.cap = None
         self.playing = False
 
+        # Timer pour mettre à jour la vidéo
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update_frame)
+        self.elapsed_timer = QElapsedTimer()
+
         # Interface
         self.video_label = QLabel(self)
         self.video_label.setAlignment(Qt.AlignmentFlag.AlignCenter)  # Centre l'affichage vidéo
         self.video_label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
-        #Boutons
+        # Boutons
         self.buttonRetourMenu = QPushButton()
-        self.buttonRetourMenu.setIcon(QIcon("logo.png"))  # Chemin vers icône
+        self.buttonRetourMenu.setIcon(QIcon("images/logo.png"))  # Chemin vers icône
         self.buttonRetourMenu.setIconSize(QSize(64, 64))  # Taille de l'icône
-        self.buttonRetourMenu.setStyleSheet("border: none; background: transparent;")  # Cache la bordure et l'arrière-plan
+        self.buttonRetourMenu.setStyleSheet(
+            "border: none; background: transparent;")  # Cache la bordure et l'arrière-plan
         self.buttonRetourMenu.clicked.connect(self.retour_menu)
 
         self.compo_bouton = QPushButton("Compo")
@@ -93,28 +101,38 @@ class Application(QWidget):
         self.compo_bouton.clicked.connect(self.compo_video)
 
         self.pause_button = QPushButton()
-        self.pause_button.setIcon(QIcon("pause.png"))  # Chemin vers icône
+        self.pause_button.setIcon(QIcon("images/pause.png"))  # Chemin vers icône
         self.pause_button.setIconSize(QSize(64, 64))  # Taille de l'icône
         self.pause_button.setStyleSheet("border: none; background: transparent;")
         self.pause_button.clicked.connect(self.toggle_playback)
 
         self.stop_button = QPushButton()
-        self.stop_button.setIcon(QIcon("stop.png"))  # Chemin vers ton icône
+        self.stop_button.setIcon(QIcon("images/stop.png"))  # Chemin vers ton icône
         self.stop_button.setIconSize(QSize(64, 64))  # Taille de l'icône
         self.stop_button.setStyleSheet("border: none; background: transparent;")
         self.stop_button.clicked.connect(self.stop_video)
 
         self.rewind_button = QPushButton()
-        self.rewind_button.setIcon(QIcon("fast-backward.png"))  # Chemin vers ton icône
+        self.rewind_button.setIcon(QIcon("images/fast-backward.png"))  # Chemin vers ton icône
         self.rewind_button.setIconSize(QSize(64, 64))  # Taille de l'icône
         self.rewind_button.setStyleSheet("border: none; background: transparent;")
         self.rewind_button.clicked.connect(self.rewind_video)
 
         self.forward_button = QPushButton()
-        self.forward_button.setIcon(QIcon("fast-forward.png"))  # Chemin vers ton icône
+        self.forward_button.setIcon(QIcon("images/fast-forward.png"))  # Chemin vers ton icône
         self.forward_button.setIconSize(QSize(64, 64))  # Taille de l'icône
         self.forward_button.setStyleSheet("border: none; background: transparent;")
         self.forward_button.clicked.connect(self.forward_video)
+
+        # Barre de progression
+        self.slider = CustomSlider(Qt.Orientation.Horizontal)
+        self.slider.setMinimum(0)
+        self.slider.setMaximum(100)  # Par défaut, ajusté lors du chargement de la vidéo
+
+
+        # Labels temps
+        self.time_label = QLabel("0:00 / 0:00")
+        self.time_label.setStyleSheet("color: white;")
 
         # Layout principal
         layout = QVBoxLayout()
@@ -123,6 +141,8 @@ class Application(QWidget):
         layoutH2 = QHBoxLayout()
 
         layout.addLayout(layoutH1)
+        layout.addWidget(self.slider)
+        layout.addWidget(self.time_label)
         layout.addLayout(layoutH2)
 
         layoutH1.addWidget(self.buttonRetourMenu, alignment=Qt.AlignmentFlag.AlignTop)
@@ -134,12 +154,9 @@ class Application(QWidget):
         layoutH2.addWidget(self.rewind_button, alignment=Qt.AlignmentFlag.AlignCenter)
         layoutH2.addWidget(self.forward_button, alignment=Qt.AlignmentFlag.AlignCenter)
 
-
         self.setLayout(layout)
 
-        # Timer pour mettre à jour la vidéo
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.update_frame)
+
 
     def set_video_path(self, path):
         """ Définit le chemin de la vidéo et initialise OpenCV """
@@ -149,13 +166,22 @@ class Application(QWidget):
         self.cap = cv2.VideoCapture(self.video_path)
         self.playing = True
         self.timer.start(30)  # Démarrer le timer (30 ms ≈ 33 FPS)
+        self.elapsed_timer.start()
+
+        # Ajuste le slider selon la durée réelle
+        total_frames = self.cap.get(cv2.CAP_PROP_FRAME_COUNT)
+        fps = self.cap.get(cv2.CAP_PROP_FPS)
+        if fps > 0:
+            total_time = total_frames / fps
+            self.time_label.setText(f"0:00 / {int(total_time // 60)}:{int(total_time % 60):02d}")
+            self.slider.setMaximum(100)
 
     def update_frame(self):
         """ Met à jour l'affichage de la vidéo """
         if self.playing and self.cap:
             ret, frame = self.cap.read()
             if ret:
-                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # Convertir pour PyQt6
+                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                 height, width, _ = frame.shape
                 bytes_per_line = 3 * width
                 q_img = QImage(frame.data, width, height, bytes_per_line, QImage.Format.Format_RGB888)
@@ -166,6 +192,20 @@ class Application(QWidget):
                     self.video_label.width(), self.video_label.height(),
                     Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation
                 ))
+
+                # Mise à jour slider et temps
+                current_frame = self.cap.get(cv2.CAP_PROP_POS_FRAMES)
+                total_frames = self.cap.get(cv2.CAP_PROP_FRAME_COUNT)
+                if total_frames > 0:
+                    self.slider.setValue(int(current_frame / total_frames * 100))
+
+                    current_time = int(self.cap.get(cv2.CAP_PROP_POS_MSEC) / 1000)
+                    total_time = int(total_frames / self.cap.get(cv2.CAP_PROP_FPS))
+
+                    self.time_label.setText(
+                        f"{current_time // 60}:{current_time % 60:02d} / {total_time // 60}:{total_time % 60:02d}"
+                    )
+
             else:
                 self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)  # Rejouer la vidéo
 
@@ -178,15 +218,14 @@ class Application(QWidget):
         """ Met en pause ou reprend la lecture """
         if self.cap:
             self.playing = not self.playing
-            self.pause_button.setIcon(QIcon("pause.png" if self.playing else "play.png"))
-
+            self.pause_button.setIcon(QIcon("images/pause.png" if self.playing else "images/play.png"))
 
     def stop_video(self):
         """ Arrête la lecture de la vidéo """
         if self.cap:
             self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)  # Remet la vidéo au début
             self.playing = False
-            self.pause_button.setIcon(QIcon("play.png"))
+            self.pause_button.setIcon(QIcon("images/play.png"))
 
     def rewind_video(self):
         """ Reculer de 5 secondes dans la vidéo """
@@ -199,7 +238,6 @@ class Application(QWidget):
             self.cap.set(cv2.CAP_PROP_POS_FRAMES, new_pos)
 
             if self.playing == False: self.playing = True
-
 
     def forward_video(self):
         """ Avancer de 5 secondes dans la vidéo """
@@ -231,12 +269,6 @@ class Application(QWidget):
                     item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                     self.tableau.setItem(i, j, item)
 
-    def closeEvent(self, event):
-        """ Libère les ressources OpenCV à la fermeture """
-        if self.cap:
-            self.cap.release()
-        event.accept()
-
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -246,7 +278,7 @@ class MainWindow(QWidget):
         self.setStyleSheet("background-color: #222F49")  # Changer la couleur
 
         self.stacked_widget = QStackedWidget()
-        self.setWindowIcon(QIcon("logo.png"))
+        self.setWindowIcon(QIcon("images/logo.png"))
         self.app_screen = Application(self.stacked_widget)  # Crée l'écran de l'application
         self.menu = Menu(self.stacked_widget, self.app_screen)  # Passe une référence à l'application
 
