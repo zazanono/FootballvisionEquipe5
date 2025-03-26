@@ -3,6 +3,7 @@ from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import (
     QWidget, QPushButton, QVBoxLayout, QFileDialog, QLabel,
 )
+from video_foot_ml.main import main
 
 class Menu(QWidget):
     def __init__(self, stacked_widget, app_screen):
@@ -53,10 +54,11 @@ class Menu(QWidget):
         file_path, _ = QFileDialog.getOpenFileName(self, "Sélectionner un fichier", "", "Vidéo (*.mp4 *.avi)")
         if file_path:
             self.label.setText(file_path)  # Afficher le chemin sélectionné
-            self.app_screen.set_video_path(file_path)  # Envoyer le chemin à l'application
+            main(file_path)
+            #self.app_screen.set_video_path(file_path)  # Envoyer le chemin à l'application
 
     def lancer(self):
         if self.app_screen.video_path:  # Vérifie si un fichier a été sélectionné
             self.stacked_widget.setCurrentIndex(1)  # Change vers l'application
         else:
-            self.label.setText("Sélectionnez un fichier vidéo avant de lancer l'application !")
+            self.label.setText("Sélectionnez un fichier vidéo avant de lancer l'application.")
