@@ -171,7 +171,7 @@ class Application(QWidget):
         if self.cap:
             current_pos = self.cap.get(cv2.CAP_PROP_POS_FRAMES)
             fps = self.cap.get(cv2.CAP_PROP_FPS)
-            frames_to_rewind = int(fps * 5)  # 15 secondes en frames
+            frames_to_rewind = int(fps * 5)  # 5 secondes en frames
 
             new_pos = max(0, current_pos - frames_to_rewind)  # Ne pas dépasser le début de la vidéo
             self.cap.set(cv2.CAP_PROP_POS_FRAMES, new_pos)
@@ -183,7 +183,7 @@ class Application(QWidget):
         if self.cap:
             current_pos = self.cap.get(cv2.CAP_PROP_POS_FRAMES)
             fps = self.cap.get(cv2.CAP_PROP_FPS)
-            frames_to_advance = int(fps * 5)  # 15 secondes en frames
+            frames_to_advance = int(fps * 5)  # 5 secondes en frames
 
             total_frames = self.cap.get(cv2.CAP_PROP_FRAME_COUNT)
             new_pos = min(total_frames - 1, current_pos + frames_to_advance)  # Ne pas dépasser la fin de la vidéo
