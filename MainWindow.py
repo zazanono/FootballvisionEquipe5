@@ -3,8 +3,8 @@ import sys
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QWidget, QStackedWidget, QVBoxLayout, QApplication
 
-from Interfaces.InterfaceApplication import Application
-from Interfaces.InterfaceMenu import Menu
+from Interfaces.Application import Application
+from Interfaces.Menu import Menu
 
 
 class MainWindow(QWidget):
