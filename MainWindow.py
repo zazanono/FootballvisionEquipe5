@@ -3,8 +3,9 @@ import sys
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QWidget, QStackedWidget, QVBoxLayout, QApplication
 
-from Interfaces.InterfaceApplication import Application
-from Interfaces.InterfaceMenu import Menu
+from Interfaces.Application import Application
+from Interfaces.Menu import Menu
+from Interfaces.Chargement import Chargement
 
 
 class MainWindow(QWidget):
@@ -16,11 +17,13 @@ class MainWindow(QWidget):
 
         self.stacked_widget = QStackedWidget()
         self.setWindowIcon(QIcon("images/logo.png"))
-        self.app_screen = Application(self.stacked_widget)  # Crée l'écran de l'application
-        self.menu = Menu(self.stacked_widget, self.app_screen)  # Passe une référence à l'application
+        self.app_ecran = Application(self.stacked_widget)  # Crée l'écran de l'application
+        self.menu = Menu(self.stacked_widget, self.app_ecran)  # Crée l'écran du menu
+        self.ecran_chargement = Chargement(self.stacked_widget)
 
         self.stacked_widget.addWidget(self.menu)  # Index 0 : Menu
-        self.stacked_widget.addWidget(self.app_screen)  # Index 1 : Application
+        self.stacked_widget.addWidget(self.ecran_chargement)  # Index 1 : Chargement
+        self.stacked_widget.addWidget(self.app_ecran)  # Index 2 : Application
 
         layout = QVBoxLayout()
         layout.addWidget(self.stacked_widget)
