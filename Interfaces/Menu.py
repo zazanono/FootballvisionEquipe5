@@ -1,7 +1,7 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import (QWidget, QPushButton, QVBoxLayout, QFileDialog, QLabel,)
-#from video_foot_ml.MainML import lecteur_video
+from video_foot_ml.MainML import *
 
 class Menu(QWidget):
     def __init__(self, stacked_widget, app_ecran):
@@ -53,7 +53,8 @@ class Menu(QWidget):
         if file_path:
             self.label.setText(file_path)  # Afficher le chemin sélectionné
             self.app_ecran.set_video_path(file_path)  # Envoyer le chemin à l'application
-            #lecteur_video(file_path)
+            # self.app_ecran.set_video_path('video_foot_ml/output_videos/output_videos.mp4')  # Envoyer le chemin à l'application
+            analyseYolo(file_path, False)
 
     def lancer(self):
         if self.app_ecran.video_path:  # Vérifie si un fichier a été sélectionné
