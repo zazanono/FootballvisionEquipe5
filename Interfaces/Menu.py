@@ -54,7 +54,7 @@ class Menu(QWidget):
             self.label.setText(file_path)  # Afficher le chemin sélectionné
             self.app_ecran.set_video_path(file_path)  # Envoyer le chemin à l'application
             # self.app_ecran.set_video_path('video_foot_ml/output_videos/output_videos.mp4')  # Envoyer le chemin à l'application
-            analyseYolo(file_path, False)
+            #analyseYolo(file_path, False)
 
     def lancer(self):
         if self.app_ecran.video_path:  # Vérifie si un fichier a été sélectionné

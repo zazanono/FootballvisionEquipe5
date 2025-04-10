@@ -33,5 +33,5 @@ def main():
     sauvegarder_video(video_sortie_images, "output_videos/", "output_videos")
 
 
-if __name__ == '__main__':
-    main()
+#if __name__ == '__main__':
+    #main()
