@@ -1,7 +1,8 @@
 from video_foot_ml.utils import sauvegarder_video, lire_video
 from video_foot_ml.trackers import Tracker
+from Interfaces.Chargement import Chargement
 
-def analyseYolo(chemin_vid, vid_deja_faite):
+def analyseYolo(chemin_vid, vid_deja_faite, chargement_ecran):
     # Lire la video
     video_images = lire_video(chemin_vid)
 
@@ -16,21 +17,25 @@ def analyseYolo(chemin_vid, vid_deja_faite):
     # Sauvegarder la video
     sauvegarder_video(video_sortie_images, "output_videos/", "output_videos")
 
+    # Dire au chargement que le traitement video est terminé
+    chargement_ecran.chargement_fini()
 
-def main():
+
+
+#def main():
     # Lire la video
-    video_images = lire_video("input_videos/foot1.mp4")
+    #video_images = lire_video("input_videos/foot1.mp4")
 
     # Initialiser les trackers
-    tracker = Tracker('models/detecteur_foot_n.pt')
-    tracks = tracker.get_object_tracks(video_images, read_from_stub=True,
-                                       stub_path='stubs/track_stubs.pkl')
+    #tracker = Tracker('models/detecteur_foot_n.pt')
+    #tracks = tracker.get_object_tracks(video_images, read_from_stub=True,
+                                       #stub_path='stubs/track_stubs.pkl')
 
     # Dessin video
-    video_sortie_images = tracker.draw_annotations(video_images, tracks)
+    #video_sortie_images = tracker.draw_annotations(video_images, tracks)
 
     # Sauvegarder la video
-    sauvegarder_video(video_sortie_images, "output_videos/", "output_videos")
+    #sauvegarder_video(video_sortie_images, "output_videos/", "outputtest")
 
 
 #if __name__ == '__main__':

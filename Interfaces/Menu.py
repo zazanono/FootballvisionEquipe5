@@ -4,10 +4,13 @@ from PyQt6.QtWidgets import (QWidget, QPushButton, QVBoxLayout, QFileDialog, QLa
 from video_foot_ml.MainML import *
 
 class Menu(QWidget):
-    def __init__(self, stacked_widget, app_ecran):
+    def __init__(self, stacked_widget, chargement_ecran):
         super().__init__()
         self.stacked_widget = stacked_widget  # Référence à QStackedWidget
-        self.app_ecran = app_ecran  # Référence à l'écran de l'application
+        self.chargement_ecran = chargement_ecran  # Référence à l'écran de l'application
+
+        self.fichier_selectionne = False # Boolean pour verifier si un fichier a été selectionné
+        self.file_path = ""
 
         self.setStyleSheet("background-color: #222F49; color: white; font-size: 18px;")
 
@@ -49,15 +52,17 @@ class Menu(QWidget):
         self.setLayout(layout)
 
     def parcourir_fichiers(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, "Sélectionner un fichier", "", "Vidéo (*.mp4 *.avi)")
-        if file_path:
-            self.label.setText(file_path)  # Afficher le chemin sélectionné
-            self.app_ecran.set_video_path(file_path)  # Envoyer le chemin à l'application
+        self.file_path, _ = QFileDialog.getOpenFileName(self, "Sélectionner un fichier", "", "Vidéo (*.mp4 *.avi)")
+        if self.file_path:
+            self.label.setText(self.file_path)  # Afficher le chemin sélectionné
+            self.fichier_selectionne = True
+            #self.chargement_ecran.set_video_path(file_path)  # Envoyer le chemin à l'application
             # self.app_ecran.set_video_path('video_foot_ml/output_videos/output_videos.mp4')  # Envoyer le chemin à l'application
-            #analyseYolo(file_path, False)
 
     def lancer(self):
-        if self.app_ecran.video_path:  # Vérifie si un fichier a été sélectionné
+        if self.fichier_selectionne:  # Vérifie si un fichier a été sélectionné
+            self.chargement_ecran.set_file_path_pour_analyse(self.file_path)
             self.stacked_widget.setCurrentIndex(1)  # Change vers le chargement
+            #analyseYolo(self.file_path, False, self.chargement_ecran)
         else:
             self.label.setText("Sélectionnez un fichier vidéo avant de lancer l'application.")
