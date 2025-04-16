@@ -1,16 +1,17 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import (QWidget, QPushButton, QVBoxLayout, QFileDialog, QLabel,)
-from video_foot_ml.MainML import *
+from analyse_thread import AnalyseThread
+
 
 class Menu(QWidget):
     def __init__(self, stacked_widget, chargement_ecran):
         super().__init__()
         self.stacked_widget = stacked_widget  # Référence à QStackedWidget
         self.chargement_ecran = chargement_ecran  # Référence à l'écran de l'application
+        self.file_path = ""
 
         self.fichier_selectionne = False # Boolean pour verifier si un fichier a été selectionné
-        self.file_path = ""
 
         self.setStyleSheet("background-color: #222F49; color: white; font-size: 18px;")
 
@@ -54,15 +55,16 @@ class Menu(QWidget):
     def parcourir_fichiers(self):
         self.file_path, _ = QFileDialog.getOpenFileName(self, "Sélectionner un fichier", "", "Vidéo (*.mp4 *.avi)")
         if self.file_path:
-            self.label.setText(self.file_path)  # Afficher le chemin sélectionné
             self.fichier_selectionne = True
-            #self.chargement_ecran.set_video_path(file_path)  # Envoyer le chemin à l'application
-            # self.app_ecran.set_video_path('video_foot_ml/output_videos/output_videos.mp4')  # Envoyer le chemin à l'application
+            self.label.setText(self.file_path)  # Afficher le chemin sélectionné
+
 
     def lancer(self):
         if self.fichier_selectionne:  # Vérifie si un fichier a été sélectionné
-            self.chargement_ecran.set_file_path_pour_analyse(self.file_path)
             self.stacked_widget.setCurrentIndex(1)  # Change vers le chargement
-            #analyseYolo(self.file_path, False, self.chargement_ecran)
+
+            self.thread = AnalyseThread(self.file_path, False)
+            self.thread.analyse_terminee.connect(self.chargement_ecran.chargement_fini)
+            self.thread.start()
         else:
             self.label.setText("Sélectionnez un fichier vidéo avant de lancer l'application.")

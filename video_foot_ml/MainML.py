@@ -1,8 +1,7 @@
 from video_foot_ml.utils import sauvegarder_video, lire_video
 from video_foot_ml.trackers import Tracker
-from Interfaces.Chargement import Chargement
 
-def analyseYolo(chemin_vid, vid_deja_faite, chargement_ecran):
+def analyseYolo(chemin_vid, vid_deja_faite):
     # Lire la video
     video_images = lire_video(chemin_vid)
 
@@ -18,7 +17,6 @@ def analyseYolo(chemin_vid, vid_deja_faite, chargement_ecran):
     sauvegarder_video(video_sortie_images, "output_videos/", "output_videos")
 
     # Dire au chargement que le traitement video est terminé
-    chargement_ecran.chargement_fini()
 
 
 
