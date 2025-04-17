@@ -10,6 +10,10 @@ class AnalyseThread(QThread):
         self.vid_deja_faite = vid_deja_faite
 
     def run(self):
-        analyseYolo(self.chemin_vid, self.vid_deja_faite)
-
-        self.analyse_terminee.emit()
+        try:
+            print("Lancement de l’analyse dans le thread…")
+            analyseYolo(self.chemin_vid, self.vid_deja_faite)
+            print("Analyse terminée dans le thread !")
+            self.analyse_terminee.emit()
+        except Exception as e:
+            print("Erreur dans le thread d’analyse :", e)

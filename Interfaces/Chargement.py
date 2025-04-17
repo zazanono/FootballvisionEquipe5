@@ -19,8 +19,11 @@ class Chargement(QWidget):
 
 
     def chargement_fini(self):
+        print("Analyse terminée, on change d’écran !")
+        self.app_ecran.set_video_path("video_foot_ml/output_videos/output_videos.mp4")
+        #self.app_ecran.set_video_path("output_videos/output_videos.mp4")
         self.stacked_widget.setCurrentIndex(2) # Change vers l'application
-        self.app_ecran.set_video_path("output_videos/output_videos.mp4")
+
 
 
 
