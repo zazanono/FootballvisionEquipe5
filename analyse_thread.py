@@ -3,6 +3,7 @@ from video_foot_ml.MainML import analyseYolo
 
 class AnalyseThread(QThread):
     analyse_terminee = pyqtSignal()  # Signal à émettre quand c’est terminé
+    erreur = pyqtSignal()
 
     def __init__(self, chemin_vid, vid_deja_faite):
         super().__init__()
@@ -17,3 +18,4 @@ class AnalyseThread(QThread):
             self.analyse_terminee.emit()
         except Exception as e:
             print("Erreur dans le thread d’analyse :", e)
+            self.erreur.emit()
