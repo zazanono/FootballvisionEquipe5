@@ -4,10 +4,8 @@ from PyQt6.QtWidgets import QSlider
 
 
 class CustomSlider(QSlider):
-    """ Barre de progression qui détecte le clic directement """
 
     def mousePressEvent(self, event):
-        """ Gère le clic gauche sur le slider """
         if event.button() == Qt.MouseButton.LeftButton:
             mouse_x = event.position().x()  # Position X du clic local
             slider_width = self.width()  # Largeur totale du slider

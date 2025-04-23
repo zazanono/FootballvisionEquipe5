@@ -40,6 +40,6 @@ class Chargement(QWidget):
         self.bouton_retour.setVisible(True)
 
     def retour_menu(self):
-        self.stacked_widget(0)
+        self.stacked_widget.setCurrentIndex(0)
         self.label.setText("Traitement en cours")
         self.bouton_retour.setVisible(False)

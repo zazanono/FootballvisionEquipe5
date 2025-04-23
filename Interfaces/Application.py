@@ -67,7 +67,7 @@ class Application(QWidget):
         self.slider = CustomSlider(Qt.Orientation.Horizontal)
         self.slider.setMinimum(0)
         self.slider.setMaximum(100)  # Par défaut, ajusté lors du chargement de la vidéo
-
+        self.slider.setFixedWidth(1000)
 
         # Labels temps
         self.time_label = QLabel("0:00 / 0:00")
@@ -78,20 +78,25 @@ class Application(QWidget):
 
         layoutH1 = QHBoxLayout()
         layoutH2 = QHBoxLayout()
+        layoutH2.setContentsMargins(500,0,500,0)
+        layoutH3 = QHBoxLayout()
+        layoutH3.setContentsMargins(200,0,200,0)
 
         layout.addLayout(layoutH1)
-        layout.addWidget(self.slider)
-        layout.addWidget(self.time_label)
+        layout.addLayout(layoutH3)
         layout.addLayout(layoutH2)
+
+        layoutH3.addWidget(self.time_label, alignment=Qt.AlignmentFlag.AlignHCenter)
+        layoutH3.addWidget(self.slider, alignment=Qt.AlignmentFlag.AlignHCenter)
 
         layoutH1.addWidget(self.buttonRetourMenu, alignment=Qt.AlignmentFlag.AlignTop)
         layoutH1.addWidget(self.video_label)
         layoutH1.addWidget(self.compo_bouton, alignment=Qt.AlignmentFlag.AlignCenter)
 
-        layoutH2.addWidget(self.pause_button, alignment=Qt.AlignmentFlag.AlignCenter)
-        layoutH2.addWidget(self.stop_button, alignment=Qt.AlignmentFlag.AlignCenter)
         layoutH2.addWidget(self.rewind_button, alignment=Qt.AlignmentFlag.AlignCenter)
+        layoutH2.addWidget(self.pause_button, alignment=Qt.AlignmentFlag.AlignCenter)
         layoutH2.addWidget(self.forward_button, alignment=Qt.AlignmentFlag.AlignCenter)
+        layoutH2.addWidget(self.stop_button, alignment=Qt.AlignmentFlag.AlignCenter)
 
         self.setLayout(layout)
 
