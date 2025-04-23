@@ -13,7 +13,15 @@ from video_foot_ml.outils import get_center_of_bbox, get_bbox_width, get_foot_po
 class Tracker:
     def __init__(self, model_path):
         self.model = YOLO(model_path)
-        self.tracker = sv.ByteTrack()
+
+        fps = 30  # or obtain via cv2.VideoCapture
+        self.tracker = sv.ByteTrack(
+            track_activation_threshold=0.25,  # keep your model’s clean detections
+            lost_track_buffer=60,  # allow 60 frames (≈2 s) of occlusion
+            minimum_matching_threshold=0.8,  # default
+            frame_rate=fps,
+            minimum_consecutive_frames=2  # ignore any object seen <2 frames
+        )
 
     def add_position_to_tracks(sekf, tracks):
         for object, object_tracks in tracks.items():
@@ -37,6 +45,7 @@ class Tracker:
         return detections
 
     def get_object_tracks(self, frames, read_from_stub=False, stub_path=None):
+        self.tracker.reset()
 
         if read_from_stub and stub_path is not None and os.path.exists(stub_path):
             with open(stub_path, 'rb') as f:
