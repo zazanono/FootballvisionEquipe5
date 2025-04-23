@@ -15,9 +15,12 @@ def analyseYolo(chemin_vid, vid_deja_faite):
     tracks = tracker.get_object_tracks(video_images, read_from_stub=vid_deja_faite,
                                        stub_path=os.path.join(BASE_DIR, "stubs", "track_stubs.pkl")) # Construis le chemin absolu du fichier
 
+    #Positions des choses
+    tracker.add_position_to_tracks(tracks)
+
     # Vitesse et distance
     vitesse_distance = VitesseEtDistance()
-    vitesse_distance.suivi_de_la_vitesse_et_de_la_distance(tracks)
+    vitesse_distance.suivie_de_la_vitesse_et_de_la_distance(tracks)
 
     # Dessin video
     video_sortie_images = tracker.draw_annotations(video_images, tracks)
