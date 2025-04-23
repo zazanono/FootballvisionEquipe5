@@ -3,7 +3,7 @@ from video_foot_ml.trackers import Tracker
 import  os
 from video_foot_ml.vitesse_distance import VitesseEtDistance
 
-def analyseYolo(chemin_vid, vid_deja_faite):
+def analyseYolo(chemin_vid, vid_deja_faite, progression_callback=None):
     # Lire la video
     video_images = lire_video(chemin_vid)
 
@@ -12,8 +12,12 @@ def analyseYolo(chemin_vid, vid_deja_faite):
 
     # Initialiser les trackers
     tracker = Tracker('video_foot_ml/models/detecteur_foot_n.pt')
-    tracks = tracker.get_object_tracks(video_images, read_from_stub=vid_deja_faite,
-                                       stub_path=os.path.join(BASE_DIR, "stubs", "track_stubs.pkl")) # Construis le chemin absolu du fichier
+    tracks = tracker.get_object_tracks(
+                                        video_images,
+                                        read_from_stub=vid_deja_faite,
+                                        stub_path=os.path.join(BASE_DIR, "stubs", "track_stubs.pkl"), # Construis le chemin absolu du fichier
+                                        progression_callback=progression_callback
+    )
 
     #Positions des choses
     #tracker.add_position_to_tracks(tracks)

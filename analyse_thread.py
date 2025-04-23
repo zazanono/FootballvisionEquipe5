@@ -4,6 +4,7 @@ from video_foot_ml.MainML import analyseYolo
 class AnalyseThread(QThread):
     analyse_terminee = pyqtSignal()  # Signal à émettre quand c’est terminé
     erreur = pyqtSignal()
+    progression = pyqtSignal(int)
 
     def __init__(self, chemin_vid, vid_deja_faite):
         super().__init__()
@@ -13,7 +14,11 @@ class AnalyseThread(QThread):
     def run(self):
         try:
             print("Lancement de l’analyse dans le thread…")
-            analyseYolo(self.chemin_vid, self.vid_deja_faite)
+
+            def callback_progression(pourcentage):
+                self.progression.emit(pourcentage)
+
+            analyseYolo(self.chemin_vid, self.vid_deja_faite, progression_callback=callback_progression)
             print("Analyse terminée dans le thread !")
             self.analyse_terminee.emit()
         except Exception as e:

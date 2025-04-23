@@ -109,7 +109,7 @@ class Application(QWidget):
             self.cap.release()  # Libérer l'ancienne vidéo si besoin
         self.cap = cv2.VideoCapture(self.video_path)
         self.playing = True
-        self.timer.start(30)  # Démarrer le timer (30 ms ≈ 33 FPS)
+        self.timer.start(42)  # Démarrer le timer (42 ms ≈ 24 FPS)
         self.elapsed_timer.start()
 
         # Ajuste le slider selon la durée réelle

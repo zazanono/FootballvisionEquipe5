@@ -34,7 +34,7 @@ class Tracker:
                         position = get_foot_position(bbox)
                     tracks[object][frame_num][track_id]['position'] = position
 
-    def detect_frames(self, frames):
+    def detect_frames(self, frames, progression_callback=None):
         batch_size = 20
         detections = []
         for i in range(0, len(frames), batch_size):
@@ -42,9 +42,13 @@ class Tracker:
             detections_batch = self.model.track(frames[i: i + batch_size], conf=0.1)
             detections += detections_batch
 
+            if progression_callback:
+                pourcentage = int((i + batch_size) / len(frames) * 100)
+                progression_callback(min(pourcentage, 100))
+
         return detections
 
-    def get_object_tracks(self, frames, read_from_stub=False, stub_path=None):
+    def get_object_tracks(self, frames, read_from_stub=False, stub_path=None, progression_callback=None):
         self.tracker.reset()
 
         if read_from_stub and stub_path is not None and os.path.exists(stub_path):
@@ -52,7 +56,7 @@ class Tracker:
                 tracks = pickle.load(f)
             return tracks
 
-        detections = self.detect_frames(frames)
+        detections = self.detect_frames(frames, progression_callback)
 
         tracks = {
             "players": [],

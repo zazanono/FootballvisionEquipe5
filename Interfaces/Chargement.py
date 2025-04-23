@@ -1,5 +1,5 @@
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QWidget, QLabel, QVBoxLayout, QPushButton
+from PyQt6.QtWidgets import QWidget, QLabel, QVBoxLayout, QPushButton, QProgressBar
 
 
 class Chargement(QWidget):
@@ -9,9 +9,35 @@ class Chargement(QWidget):
         self.app_ecran = app_ecran  # Référence à l'écran de l'application
 
         layout = QVBoxLayout()
+        layout.setSpacing(30)
 
-        self.label = QLabel("Traitement en cours")
+        self.label = QLabel("Analyse en cours")
         self.label.setStyleSheet("background-color: #222F49; color: white; font-size: 30px;")
+
+        self.barre_progression = QProgressBar()
+        self.barre_progression.setMinimum(0)
+        self.barre_progression.setMaximum(100)
+        self.barre_progression.setValue(0)
+        self.barre_progression.setFormat("%p%")
+        self.barre_progression.setFixedWidth(1000)
+        self.barre_progression.setStyleSheet("""
+                                            QProgressBar {
+                                                background-color: #ccc;
+                                                border: 2px solid #4F94BA;
+                                                border-radius: 15px;
+                                                text-align: center;
+                                                height: 30px; 
+                                                font-size: 18px; 
+                                                color: #222F49; 
+                                                padding: 2px;
+                                            }
+                                            QProgressBar::chunk {
+                                                background-color: #61BCF0;
+                                                border-radius: 13px;
+                                                margin: 0px; 
+                                            }
+                                            """)
+
 
         self.bouton_retour = QPushButton("Retour au menu")
         self.bouton_retour.setStyleSheet(
@@ -20,9 +46,9 @@ class Chargement(QWidget):
             "QPushButton:pressed {background-color: #61BCF0;}")
         self.bouton_retour.clicked.connect(self.retour_menu)
 
-        layout.addWidget(self.label, alignment=Qt.AlignmentFlag.AlignHCenter)
-
-        layout.addWidget(self.bouton_retour, alignment=Qt.AlignmentFlag.AlignHCenter)
+        layout.addWidget(self.label, alignment=Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(self.barre_progression, alignment=Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(self.bouton_retour, alignment=Qt.AlignmentFlag.AlignCenter)
 
         self.bouton_retour.setVisible(False)
 
@@ -31,7 +57,6 @@ class Chargement(QWidget):
     def chargement_fini(self):
         print("Analyse terminée, on change d’écran !")
         self.app_ecran.set_video_path("video_foot_ml/output_videos/output_videos.mp4")
-        # self.app_ecran.set_video_path("output_videos/output_videos.mp4")
         self.stacked_widget.setCurrentIndex(2)  # Change vers l'application
 
     def erreur_de_chargement(self):
@@ -43,3 +68,7 @@ class Chargement(QWidget):
         self.stacked_widget.setCurrentIndex(0)
         self.label.setText("Traitement en cours")
         self.bouton_retour.setVisible(False)
+        self.barre_progression.setValue(0)
+
+    def mettre_a_jour_progression(self, valeur):
+        self.barre_progression.setValue(valeur)

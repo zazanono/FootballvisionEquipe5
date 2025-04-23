@@ -66,6 +66,7 @@ class Menu(QWidget):
             self.thread = AnalyseThread(self.file_path, False)
             self.thread.analyse_terminee.connect(self.chargement_ecran.chargement_fini)
             self.thread.erreur.connect(self.chargement_ecran.erreur_de_chargement)
+            self.thread.progression.connect(self.chargement_ecran.mettre_a_jour_progression)
             self.thread.start()
         else:
             self.label.setText("Sélectionnez un fichier vidéo avant de lancer l'application.")
