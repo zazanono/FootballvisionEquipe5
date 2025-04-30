@@ -1,7 +1,9 @@
 import cv2
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QUrl
 from PyQt6.QtGui import QPixmap, QImage
-from PyQt6.QtWidgets import (QWidget, QPushButton, QVBoxLayout, QFileDialog, QLabel,)
+from PyQt6.QtMultimedia import QMediaPlayer
+from PyQt6.QtMultimediaWidgets import QVideoWidget
+from PyQt6.QtWidgets import (QWidget, QPushButton, QVBoxLayout, QFileDialog, QLabel, )
 from analyse_thread import AnalyseThread
 
 
@@ -13,7 +15,7 @@ class Menu(QWidget):
         self.file_path = ""
         self.ancient_file_path = ""
 
-        self.fichier_selectionne = False # Boolean pour verifier si un fichier a été selectionné
+        self.fichier_selectionne = False  # Boolean pour verifier si un fichier a été selectionné
         self.fichier_deja_lu = False
 
         self.setStyleSheet("background-color: #222F49; color: white; font-size: 18px;")
@@ -27,11 +29,14 @@ class Menu(QWidget):
         self.image_label.setFixedSize(204, 172)  # Taille de l’image
         layout.addWidget(self.image_label, alignment=Qt.AlignmentFlag.AlignHCenter)
 
-        # Label pour l’apercu de la video
-        self.video_preview_label = QLabel()
-        self.video_preview_label.setFixedSize(480, 270)
-        self.video_preview_label.setStyleSheet("border: 2px solid #4F94BA; background-color: black;")
-        layout.addWidget(self.video_preview_label, alignment=Qt.AlignmentFlag.AlignHCenter)
+        # Apercu de la video choisie
+        self.video_widget = QVideoWidget()
+        self.video_widget.setFixedSize(480, 270)  # Ajuste selon la taille souhaitée
+        layout.addWidget(self.video_widget, alignment=Qt.AlignmentFlag.AlignHCenter)
+        self.media_player = QMediaPlayer()
+        self.media_player.setVideoOutput(self.video_widget)
+        # Rejoue la vidéo à la fin (boucle infinie)
+        self.media_player.mediaStatusChanged.connect(self.check_loop_video)
 
         # Label pour afficher le chemin du fichier sélectionné
         self.label = QLabel("Aucun fichier sélectionné")
@@ -71,27 +76,13 @@ class Menu(QWidget):
 
             self.label.setText(self.file_path)  # Afficher le chemin sélectionné
 
-            # Lire la première frame de la vidéo
-            cap = cv2.VideoCapture(self.file_path)
-            ret, frame = cap.read()
-            cap.release()
+            if self.file_path:
+                self.fichier_selectionne = True
+                self.label.setText(self.file_path)
 
-            if ret:
-                # Convertir BGR → RGB
-                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-
-                # Redimensionner à la taille du QLabel
-                frame_resized = cv2.resize(frame, (480, 270), interpolation=cv2.INTER_AREA)
-
-                # Convertir en QImage puis QPixmap
-                h, w, ch = frame_resized.shape
-                bytes_per_line = ch * w
-                q_image = QImage(frame_resized.data, w, h, bytes_per_line, QImage.Format.Format_RGB888)
-                pixmap = QPixmap.fromImage(q_image)
-
-                # Afficher dans le QLabel
-                self.video_preview_label.setPixmap(pixmap)
-
+                # Charger et jouer la vidéo en boucle
+                self.media_player.setSource(QUrl.fromLocalFile(self.file_path))
+                self.media_player.play()
 
     def lancer(self):
         if self.fichier_selectionne:  # Vérifie si un fichier a été sélectionné
@@ -109,3 +100,8 @@ class Menu(QWidget):
         else:
             self.label.setText("Sélection"
                                "ez un fichier vidéo avant de lancer l'application.")
+
+    def check_loop_video(self, status):
+        if status == QMediaPlayer.MediaStatus.EndOfMedia:
+            self.media_player.setPosition(0)
+            self.media_player.play()
