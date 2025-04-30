@@ -1,5 +1,6 @@
+import cv2
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QPixmap
+from PyQt6.QtGui import QPixmap, QImage
 from PyQt6.QtWidgets import (QWidget, QPushButton, QVBoxLayout, QFileDialog, QLabel,)
 from analyse_thread import AnalyseThread
 
@@ -23,6 +24,12 @@ class Menu(QWidget):
         self.image_label.preserve_aspect_ratio = True
         self.image_label.setFixedSize(204, 172)  # Taille de l’image
         layout.addWidget(self.image_label, alignment=Qt.AlignmentFlag.AlignHCenter)
+
+        # Label pour l’apercu de la video
+        self.video_preview_label = QLabel()
+        self.video_preview_label.setFixedSize(480, 270)
+        self.video_preview_label.setStyleSheet("border: 2px solid #4F94BA; background-color: black;")
+        layout.addWidget(self.video_preview_label, alignment=Qt.AlignmentFlag.AlignHCenter)
 
         # Label pour afficher le chemin du fichier sélectionné
         self.label = QLabel("Aucun fichier sélectionné")
@@ -57,6 +64,27 @@ class Menu(QWidget):
         if self.file_path:
             self.fichier_selectionne = True
             self.label.setText(self.file_path)  # Afficher le chemin sélectionné
+
+            # Lire la première frame de la vidéo
+            cap = cv2.VideoCapture(self.file_path)
+            ret, frame = cap.read()
+            cap.release()
+
+            if ret:
+                # Convertir BGR → RGB
+                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+                # Redimensionner à la taille du QLabel
+                frame_resized = cv2.resize(frame, (480, 270), interpolation=cv2.INTER_AREA)
+
+                # Convertir en QImage puis QPixmap
+                h, w, ch = frame_resized.shape
+                bytes_per_line = ch * w
+                q_image = QImage(frame_resized.data, w, h, bytes_per_line, QImage.Format.Format_RGB888)
+                pixmap = QPixmap.fromImage(q_image)
+
+                # Afficher dans le QLabel
+                self.video_preview_label.setPixmap(pixmap)
 
 
     def lancer(self):
