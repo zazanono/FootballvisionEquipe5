@@ -33,11 +33,11 @@ class Application(QWidget):
             "border: none; background: transparent;")  # Cache la bordure et l'arrière-plan
         self.buttonRetourMenu.clicked.connect(self.retour_menu)
 
-        self.compo_bouton = QPushButton("Compo")
-        self.compo_bouton.setGeometry(200, 100, 150, 400)
-        self.compo_bouton.setStyleSheet(
-            "QPushButton {background-color: white; color: black; padding: 10px; border-radius: 10px;}")
-        self.compo_bouton.clicked.connect(self.compo_video)
+        # self.compo_bouton = QPushButton("Compo")
+        # self.compo_bouton.setGeometry(200, 100, 150, 400)
+        # self.compo_bouton.setStyleSheet(
+        #     "QPushButton {background-color: white; color: black; padding: 10px; border-radius: 10px;}")
+        # self.compo_bouton.clicked.connect(self.compo_video)
 
         self.pause_button = QPushButton()
         self.pause_button.setIcon(QIcon("images/pause.png"))  # Chemin vers icône
