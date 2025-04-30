@@ -68,7 +68,7 @@ class Menu(QWidget):
 
     def parcourir_fichiers(self):
         self.file_path, _ = QFileDialog.getOpenFileName(self, "Sélectionner un fichier", "", "Vidéo (*.mp4 *.avi)")
-        if self.file_path:
+        if self.file_path != "":
             self.fichier_selectionne = True
 
             if self.ancient_file_path == self.file_path:
