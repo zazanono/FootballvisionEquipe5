@@ -9,7 +9,7 @@ class Chargement(QWidget):
         self.app_ecran = app_ecran  # Référence à l'écran de l'application
 
         layout = QVBoxLayout()
-        layout.setSpacing(30)
+        #layout.setSpacing(30)
 
         self.label = QLabel("Analyse en cours")
         self.label.setStyleSheet("background-color: #222F49; color: white; font-size: 30px;")
