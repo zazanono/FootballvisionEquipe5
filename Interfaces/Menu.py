@@ -11,8 +11,10 @@ class Menu(QWidget):
         self.stacked_widget = stacked_widget  # Référence à QStackedWidget
         self.chargement_ecran = chargement_ecran  # Référence à l'écran de l'application
         self.file_path = ""
+        self.ancient_file_path = ""
 
         self.fichier_selectionne = False # Boolean pour verifier si un fichier a été selectionné
+        self.fichier_deja_lu = False
 
         self.setStyleSheet("background-color: #222F49; color: white; font-size: 18px;")
 
@@ -63,6 +65,10 @@ class Menu(QWidget):
         self.file_path, _ = QFileDialog.getOpenFileName(self, "Sélectionner un fichier", "", "Vidéo (*.mp4 *.avi)")
         if self.file_path:
             self.fichier_selectionne = True
+
+            if self.ancient_file_path == self.file_path:
+                self.fichier_deja_lu = True
+
             self.label.setText(self.file_path)  # Afficher le chemin sélectionné
 
             # Lire la première frame de la vidéo
@@ -91,10 +97,15 @@ class Menu(QWidget):
         if self.fichier_selectionne:  # Vérifie si un fichier a été sélectionné
             self.stacked_widget.setCurrentIndex(1)  # Change vers le chargement
 
-            self.thread = AnalyseThread(self.file_path, False)
+            self.thread = AnalyseThread(self.file_path, self.fichier_deja_lu)
             self.thread.analyse_terminee.connect(self.chargement_ecran.chargement_fini)
             self.thread.erreur.connect(self.chargement_ecran.erreur_de_chargement)
             self.thread.progression.connect(self.chargement_ecran.mettre_a_jour_progression)
             self.thread.start()
+
+            self.fichier_deja_lu = False
+            self.ancient_file_path = self.file_path
+
         else:
-            self.label.setText("Sélectionnez un fichier vidéo avant de lancer l'application.")
+            self.label.setText("Sélection"
+                               "ez un fichier vidéo avant de lancer l'application.")
