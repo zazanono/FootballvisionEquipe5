@@ -68,11 +68,8 @@ class Menu(QWidget):
 
     def parcourir_fichiers(self):
         self.file_path, _ = QFileDialog.getOpenFileName(self, "Sélectionner un fichier", "", "Vidéo (*.mp4 *.avi)")
-        if self.file_path != "":
+        if self.file_path:
             self.fichier_selectionne = True
-
-            if self.ancient_file_path == self.file_path:
-                self.fichier_deja_lu = True
 
             self.label.setText(self.file_path)  # Afficher le chemin sélectionné
 
@@ -87,6 +84,9 @@ class Menu(QWidget):
     def lancer(self):
         if self.fichier_selectionne:  # Vérifie si un fichier a été sélectionné
             self.stacked_widget.setCurrentIndex(1)  # Change vers le chargement
+
+            if self.ancient_file_path == self.file_path:
+                self.fichier_deja_lu = True
 
             self.thread = AnalyseThread(self.file_path, self.fichier_deja_lu)
             self.thread.analyse_terminee.connect(self.chargement_ecran.chargement_fini)
