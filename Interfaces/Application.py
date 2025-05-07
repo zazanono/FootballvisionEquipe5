@@ -91,7 +91,7 @@ class Application(QWidget):
 
         layoutH1.addWidget(self.buttonRetourMenu, alignment=Qt.AlignmentFlag.AlignTop)
         layoutH1.addWidget(self.video_label)
-        layoutH1.addWidget(self.compo_bouton, alignment=Qt.AlignmentFlag.AlignCenter)
+        #layoutH1.addWidget(self.compo_bouton, alignment=Qt.AlignmentFlag.AlignCenter)
 
         layoutH2.addWidget(self.rewind_button, alignment=Qt.AlignmentFlag.AlignCenter)
         layoutH2.addWidget(self.pause_button, alignment=Qt.AlignmentFlag.AlignCenter)
