@@ -1,0 +1,1 @@
+from .couleur_equipes import CouleurEquipe

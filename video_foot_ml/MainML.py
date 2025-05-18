@@ -3,9 +3,10 @@ import os
 from pprint import pprint
 from video_foot_ml.outils import sauvegarder_video, lire_video
 from video_foot_ml.trackers import Tracker
+from .couleur_equipes import *
 
 def analyseYolo(chemin_vid, vid_deja_faite, progression_callback=None):
-    # 1) Read video & tracks
+    # Lire vidéo & tracks
     video_images = lire_video(chemin_vid)
     tracker = Tracker('video_foot_ml/models/detecteur_foot_n.pt')
     tracks  = tracker.get_object_tracks(
@@ -18,20 +19,20 @@ def analyseYolo(chemin_vid, vid_deja_faite, progression_callback=None):
         progression_callback=progression_callback
     )
 
-    # 2) Find first frame index with any players
+    # Trouver la première image avec des joueurs
     first_frame = next(
         (i for i, frame_dict in enumerate(tracks['players'])
          if frame_dict),
         None
     )
     if first_frame is None:
-        print("⚠️ No players detected in any frame.")
+        print("Aucun joueur dans les images.")
         return
 
-    print(f"👉 Saving crop from frame #{first_frame}, "
-          f"{len(tracks['players'][first_frame])} players found.")
+    print(f"Sauvegarde de l'image rognée #{first_frame}, "
+          f"{len(tracks['players'][first_frame])} joueurs trouvés.")
 
-    # 3) Pick one player (or loop them all)
+    # Choisir un joueur
     track_id, player = next(
         iter(tracks['players'][first_frame].items())
     )
@@ -43,20 +44,31 @@ def analyseYolo(chemin_vid, vid_deja_faite, progression_callback=None):
     ]
     print("  • bbox:", bbox, "→ crop.shape:", crop.shape)
 
-    # 4) Build absolute output directory
+    # Construction du chemin de sortie
     script_dir = os.path.dirname(os.path.abspath(__file__))
     repo_root  = os.path.dirname(script_dir)
     out_dir    = os.path.join(repo_root, "video_foot_ml", "output_videos")
     os.makedirs(out_dir, exist_ok=True)
 
-    # 5) Write and verify
+    # Vérification
     out_path = os.path.join(out_dir, f"image_rognee_{track_id}.jpg")
     ok       = cv2.imwrite(out_path, crop)
-    print(f"  • imwrite returned {ok}")
-    print("  • Files now in", out_dir, "→", os.listdir(out_dir))
+    print("  • Fichier dans ", out_dir, "→", os.listdir(out_dir))
 
-    # …then your existing draw & save-video calls
+    # Assigner les équipes
+    couleurs_equipes = CouleurEquipe()
+    couleurs_equipes.assignation_couleur(frame_img, tracks['players'][first_frame])
+
+    for num_image, track_joueur in enumerate(tracks['players']):
+        for id_joueur, track in track_joueur.items():
+            equipe = couleurs_equipes.get_equipe_joueur(video_images[num_image], track['bbox'], id_joueur)
+            tracks['players'][num_image][id_joueur]['équipe'] = equipe
+            tracks['players'][num_image][id_joueur]['couleur_équipe'] = couleurs_equipes.couleur_equipe[equipe]
+
+
+    # Sauvegarder la vidéo
     video_sortie_images = tracker.draw_annotations(video_images, tracks)
+
     sauvegarder_video(video_sortie_images,
                       os.path.join(repo_root, "/video_foot_ml/output_videos/"),
                       "output_videos1")
