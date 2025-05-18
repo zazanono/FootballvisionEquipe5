@@ -57,9 +57,12 @@ def analyseYolo(chemin_vid, vid_deja_faite, progression_callback=None):
 
     # …then your existing draw & save-video calls
     video_sortie_images = tracker.draw_annotations(video_images, tracks)
-    sauvegarder_video(video_sortie_images,
-                      os.path.join(repo_root, "/video_foot_ml/output_videos/"),
-                      "output_videos1")
+    # sauvegarder_video(video_sortie_images,
+    #                   os.path.join(repo_root, "/video_foot_ml/output_videos/"),
+    #                   "output_videos")
+
+    out_dir = os.path.join(repo_root, "video_foot_ml", "output_videos")
+    sauvegarder_video(video_sortie_images, out_dir, "output_videos")
 
 
 def main():
