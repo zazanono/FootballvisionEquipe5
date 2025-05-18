@@ -1,6 +1,5 @@
 from PyQt6.QtCore import QThread, pyqtSignal
 from video_foot_ml.MainML import analyseYolo
-import traceback
 
 class AnalyseThread(QThread):
     analyse_terminee = pyqtSignal()  # Signal à émettre quand c’est terminé
@@ -20,11 +19,8 @@ class AnalyseThread(QThread):
                 self.progression.emit(pourcentage)
 
             analyseYolo(self.chemin_vid, self.vid_deja_faite, progression_callback=callback_progression)
-
             print("Analyse terminée dans le thread !")
             self.analyse_terminee.emit()
-
         except Exception as e:
             print("Erreur dans le thread d’analyse :", e)
-            traceback.print_exc()      # ← this will dump the full stack trace
             self.erreur.emit()
