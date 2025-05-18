@@ -123,7 +123,14 @@ class Tracker:
             # Draw players
             for track_id, player in player_dict.items():
                 # print("player", player)
-                frame = self.draw_ellipse(frame, player["bbox"], (0, 0, 255), track_id)
+
+                color = player.get('couleur_équipe', (0, 0, 0))
+                b, g, r = color  # color is your numpy array
+                color_int = (int(b), int(g), int(r))
+
+                print("debug : ", color)
+                frame = self.draw_ellipse(frame, player["bbox"], color_int, track_id)
+
 
             # Draw referees
             for track_id, referee in referee_dict.items():
