@@ -62,13 +62,13 @@ def analyseYolo(chemin_vid, vid_deja_faite, progression_callback=None):
     tracker.add_position_to_tracks(tracks)
     # camera movement estimator
     camera_movement_estimator = CameraMouvement(video_images[0])
-    camera_movement_per_frame = camera_movement_estimator.get_camera_movement(video_images)
-    camera_movement_estimator.add_adjust_positions_to_tracks(tracks, camera_movement_per_frame)
+    camera_movement_per_frame = camera_movement_estimator.get_camera_mouvement(video_images)
+    camera_movement_estimator.ajouter_position_ajustee_aux_tracks(tracks, camera_movement_per_frame)
     # Ajouter transformation de position et vitesse apres (j'ai le code pour ca juste dit quand tas regler)
 
     # …then your existing draw & save-video calls
     video_sortie_images = tracker.draw_annotations(video_images, tracks)
-    video_sortie_images = camera_movement_estimator.draw_camera_movement(video_sortie_images,camera_movement_per_frame)
+    video_sortie_images = camera_movement_estimator.dessiner_mouvement_camera(video_sortie_images,camera_movement_per_frame)
 
     out_dir = os.path.join(repo_root, "video_foot_ml", "output_videos")
     sauvegarder_video(video_sortie_images, out_dir, "output_videos")

@@ -44,7 +44,7 @@ class CameraMouvement():
                         )
                         pistes[objet][num_frame][id_piste]['position_adjusted'] = position_ajustee
 
-    def obtenir_mouvement_camera(self, frames):
+    def get_camera_mouvement(self, frames):
         mouvement_camera = [[0, 0]] * len(frames)
 
         ancien_gris = cv2.cvtColor(frames[0], cv2.COLOR_BGR2GRAY)
