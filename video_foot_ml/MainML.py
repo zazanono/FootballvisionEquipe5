@@ -3,6 +3,9 @@ import os
 from pprint import pprint
 from video_foot_ml.outils import sauvegarder_video, lire_video
 from video_foot_ml.trackers import Tracker
+from video_foot_ml.camera_mouvement import CameraMouvement
+from video_foot_ml.transformation import Position_transforme
+from video_foot_ml.vitesse_distance import VitesseEtDistance
 
 def analyseYolo(chemin_vid, vid_deja_faite, progression_callback=None):
     # 1) Read video & tracks
@@ -55,8 +58,17 @@ def analyseYolo(chemin_vid, vid_deja_faite, progression_callback=None):
     print(f"  • imwrite returned {ok}")
     print("  • Files now in", out_dir, "→", os.listdir(out_dir))
 
+    # Ajouter la position
+    tracker.add_position_to_tracks(tracks)
+    # camera movement estimator
+    camera_movement_estimator = CameraMouvement(video_images[0])
+    camera_movement_per_frame = camera_movement_estimator.get_camera_movement(video_images)
+    camera_movement_estimator.add_adjust_positions_to_tracks(tracks, camera_movement_per_frame)
+    # Ajouter transformation de position et vitesse apres (j'ai le code pour ca juste dit quand tas regler)
+
     # …then your existing draw & save-video calls
     video_sortie_images = tracker.draw_annotations(video_images, tracks)
+    video_sortie_images = camera_movement_estimator.draw_camera_movement(video_sortie_images,camera_movement_per_frame)
 
     out_dir = os.path.join(repo_root, "video_foot_ml", "output_videos")
     sauvegarder_video(video_sortie_images, out_dir, "output_videos")

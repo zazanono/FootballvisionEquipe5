@@ -1,7 +1,6 @@
 import cv2
 import os
 
-
 def lire_video(video_path):
     cap = cv2.VideoCapture(video_path)
     frames = []
@@ -11,6 +10,7 @@ def lire_video(video_path):
             break
         frames.append(frame)
     return frames
+
 
 def sauvegarder_video(output_video_frames, output_video_path, output_video_nom):
     # Ensure the output directory exists
