@@ -14,12 +14,14 @@ class VitesseEtDistance():
     def suivie_de_la_vitesse_et_de_la_distance(self, tracks):
         total_distance = {}
 
-        for object, objet_track in tracks.items():
-            if object == "ball" or object == "referees":
+        for obj_type, objet_track in tracks.items():
+            if obj_type == "ball" or obj_type == "referees":
                 continue
             number_of_frames = len(objet_track)
             for frame_num in range(0, number_of_frames, self.frame_window):
                 last_frame = min(frame_num + self.frame_window, number_of_frames - 1)
+                if last_frame == frame_num:
+                    continue
 
                 for identifiant_joueur, _ in objet_track[frame_num].items():
                     if identifiant_joueur not in objet_track[last_frame]:
@@ -33,22 +35,17 @@ class VitesseEtDistance():
 
                     distance_parcourue = measure_distance(debut_position, fin_position)
                     temps = (last_frame - frame_num) / self.frame_rate
-                    vitesse_metres_par_seconde = distance_parcourue / temps
-                    vitesse_km_par_heure = vitesse_metres_par_seconde * 3.6
+                    vitesse_m_s = distance_parcourue / temps
+                    vitesse_kmh = vitesse_m_s * 3.6
 
-                    if object not in total_distance:
-                        total_distance[object] = {}
-
-                    if identifiant_joueur not in total_distance[object]:
-                        total_distance[object][identifiant_joueur] = 0
-
-                    total_distance[object][identifiant_joueur] += distance_parcourue
+                    total_distance.setdefault(obj_type, {}).setdefault(identifiant_joueur, 0)
+                    total_distance[obj_type][identifiant_joueur] += distance_parcourue
 
                     for frame_num_batch in range(frame_num, last_frame):
-                        if identifiant_joueur not in tracks[object][frame_num_batch]:
+                        if identifiant_joueur not in tracks[obj_type][frame_num_batch]:
                             continue
-                        tracks[object][frame_num_batch][identifiant_joueur]['speed'] = vitesse_km_par_heure
-                        tracks[object][frame_num_batch][identifiant_joueur]['distance'] = total_distance[object][
+                        tracks[obj_type][frame_num_batch][identifiant_joueur]['speed'] = vitesse_kmh
+                        tracks[obj_type][frame_num_batch][identifiant_joueur]['distance'] = total_distance[obj_type][
                             identifiant_joueur]
 
     def dessiner_vitesse_distance(self, frames, tracks, frame_stride=2):
@@ -74,9 +71,11 @@ class VitesseEtDistance():
 
                             position = tuple(map(int, position))
                             cv2.putText(frame, f"{speed:.2f} km/h", position, cv2.FONT_HERSHEY_SIMPLEX, 0.5,
-                                (0, 0, 0), 2)
+                                        (0, 0, 0), 2)
                             cv2.putText(frame, f"{distance:.2f} m", (position[0], position[1] + 20),
-                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
+                                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
             output_frames.append(frame)
+
+        print(f"Dessin de vitesse: {speed:.2f} km/h à la frame {frame_num}")
 
         return output_frames
