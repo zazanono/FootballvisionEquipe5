@@ -108,7 +108,7 @@ class Tracker:
             balls = tracks["ball"][frame_num]
 
             for track_id, player in players.items():
-                color = player.get('couleur_équipe', (0, 0, 0))
+                color = player.get('couleur_équipe', (112, 112, 112)) # gris par défaut
                 frame = self.draw_ellipse(frame, player["bbox"], tuple(map(int, color)), track_id)
 
             for track_id, referee in referees.items():
