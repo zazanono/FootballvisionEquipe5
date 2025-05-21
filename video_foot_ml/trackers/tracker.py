@@ -276,19 +276,17 @@ class Tracker:
 
         return frame
 
-    def draw_triangle_inv(self, frame, bbox, color, track_id=None):  # track_id not used here but kept for consistency
-        y_center_bbox = int((bbox[1] + bbox[3]) / 2)  # Center of the ball
-        x_center_bbox, _ = get_center_of_bbox(bbox)
+    def draw_triangle_inv(self, frame, bbox, color, track_id=None):
+        y1 = int(bbox[1])
+        x_center, _ = get_center_of_bbox(bbox)
 
-        radius = int(get_bbox_width(bbox) / 2 * 1.5)  # Make triangle a bit larger than ball
+        triangle = np.array([
+            [x_center, y1],
+            [x_center - 10, y1 - 20],
+            [x_center + 10, y1 - 20]
+        ])
 
-        triangle_pts = np.array([
-            [x_center_bbox, y_center_bbox - radius],  # Top point
-            [x_center_bbox - radius, y_center_bbox + int(radius * 0.5)],  # Bottom-left
-            [x_center_bbox + radius, y_center_bbox + int(radius * 0.5)]  # Bottom-right
-        ], dtype=np.int32)
-
-        cv2.drawContours(frame, [triangle_pts], 0, color, cv2.FILLED)
-        cv2.drawContours(frame, [triangle_pts], 0, (0, 0, 0), 2)  # Black border
+        cv2.drawContours(frame, [triangle], 0, color, cv2.FILLED)
+        cv2.drawContours(frame, [triangle], 0, (0, 0, 0), 2)
 
         return frame
