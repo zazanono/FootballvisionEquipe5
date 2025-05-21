@@ -97,9 +97,9 @@ class CameraMouvement():
             cv2.addWeighted(superposition, alpha, frame, 1 - alpha, 0, frame)
 
             mouvement_x, mouvement_y = mouvement_camera_par_frame[num_frame]
-            frame = cv2.putText(frame, f"Mouvement Caméra X : {mouvement_x:.2f}", (10, 30),
+            frame = cv2.putText(frame, f"Mouvement Camera X : {mouvement_x:.2f}", (10, 30),
                                 cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 3)
-            frame = cv2.putText(frame, f"Mouvement Caméra Y : {mouvement_y:.2f}", (10, 60),
+            frame = cv2.putText(frame, f"Mouvement Camera Y : {mouvement_y:.2f}", (10, 60),
                                 cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 3)
 
             frames_sorties.append(frame)

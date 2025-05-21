@@ -29,10 +29,10 @@ def analyseYolo(chemin_vid, vid_deja_faite, progression_callback=None):
         None
     )
     if first_frame is None:
-        print("⚠️ No players detected in any frame.")
+        print("No players detected in any frame.")
         return
 
-    print(f"👉 Saving crop from frame #{first_frame}, "
+    print(f"Saving crop from frame #{first_frame}, "
           f"{len(tracks['players'][first_frame])} players found.")
 
     # 3) Pick one player (or loop them all)
