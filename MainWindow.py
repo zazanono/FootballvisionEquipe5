@@ -29,7 +29,7 @@ class MainWindow(QWidget):
         layout = QVBoxLayout()
         layout.addWidget(self.stacked_widget)
         self.setLayout(layout)
-
+#eainsnb^si
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
