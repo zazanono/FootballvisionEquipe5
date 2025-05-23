@@ -3,7 +3,7 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QSlider
 
 
-class SliderPersonnalise(QSlider):
+class CustomSlider(QSlider):
 
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
@@ -15,9 +15,9 @@ class SliderPersonnalise(QSlider):
 
             # Déplacement de la vidéo au frame correspondant
             if hasattr(self.parent(), 'cap') and self.parent().cap:
-                total_Frames = self.parent().cap.get(cv2.CAP_PROP_FRAME_COUNT)
-                nouvelle_Frame = int(total_Frames * (position / 100))
-                self.parent().cap.set(cv2.CAP_PROP_POS_FRAMES, nouvelle_Frame)
+                total_frames = self.parent().cap.get(cv2.CAP_PROP_FRAME_COUNT)
+                new_frame = int(total_frames * (position / 100))
+                self.parent().cap.set(cv2.CAP_PROP_POS_FRAMES, new_frame)
 
                 # Mise à jour instantanée
                 self.parent().update_frame()
@@ -27,3 +27,4 @@ class SliderPersonnalise(QSlider):
 
             # Appel de l'événement parent (pour éviter des bugs)
             super().mousePressEvent(event)
+
