@@ -4,8 +4,8 @@ import numpy as np  # Add if not already present for potential smoothing later
 
 sys.path.append('../')
 
-from video_foot_ml.outils import measure_distance, \
-    get_foot_position  # get_foot_position is used in dessiner_vitesse_distance
+from VideoFootMl.Outils import mesure_Distance, \
+    getPositionPieds  # get_foot_position is used in dessiner_vitesse_distance
 
 
 class VitesseEtDistance():
@@ -45,7 +45,7 @@ class VitesseEtDistance():
                 if debut_position_transformed is None or fin_position_transformed is None:
                     continue
 
-                distance_parcourue = measure_distance(debut_position_transformed, fin_position_transformed)
+                distance_parcourue = mesure_Distance(debut_position_transformed, fin_position_transformed)
 
                 # Time elapsed in seconds
                 temps_ecoule = (last_frame_in_window - frame_num) / self.frame_rate
@@ -102,7 +102,7 @@ class VitesseEtDistance():
                             continue
 
                         # Use a copy of the foot position to avoid modifying original list
-                        position = list(get_foot_position(bbox))
+                        position = list(getPositionPieds(bbox))
                         position[1] += 25  # Adjust Y offset for text below player
 
                         # Ensure position coordinates are integers for cv2.putText
